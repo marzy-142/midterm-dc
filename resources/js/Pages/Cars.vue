@@ -1,58 +1,52 @@
-<template>
-    <div class="cars">
-        <h2>Cars</h2>
-        <input
-            v-model="search"
-            type="text"
-            placeholder="Search cars..."
-            class="search-box"
-        />
-        <div class="cards">
-            <div v-for="car in filteredCars" :key="car.id" class="card">
-                <h3>{{ car.make }} {{ car.model }} ({{ car.year }})</h3>
-                <p>Miles: {{ car.miles }}</p>
-            </div>
-        </div>
-    </div>
-</template>
+<script setup>
+import MainLayout from "@/Pages/MainLayout.vue";
+import { defineProps, ref, computed } from "vue";
 
-<script>
-export default {
-    props: {
-        cars: Array,
-    },
-    data() {
-        return {
-            search: "",
-        };
-    },
-    computed: {
-        filteredCars() {
-            return this.cars.filter(
-                (car) =>
-                    car.make
-                        .toLowerCase()
-                        .includes(this.search.toLowerCase()) ||
-                    car.model.toLowerCase().includes(this.search.toLowerCase())
-            );
-        },
-    },
-};
+const props = defineProps({
+    cars: Array,
+});
+
+const search = ref("");
+
+const filteredCars = computed(() => {
+    if (!props.cars) return [];
+    if (!search.value) return props.cars;
+    return props.cars.filter((car) =>
+        `${car.make} ${car.model} ${car.year}`
+            .toLowerCase()
+            .includes(search.value.toLowerCase())
+    );
+});
 </script>
 
-<style scoped>
-.search-box {
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-}
+<template>
+    <MainLayout>
+        <div class="p-6 bg-gray-100 rounded-lg shadow-md">
+            <h1 class="text-2xl font-bold mb-4">Cars</h1>
+            <input
+                v-model="search"
+                type="text"
+                placeholder="Search Cars"
+                class="p-2 mb-4 border border-gray-300 rounded w-full"
+            />
 
-.card {
-    padding: 15px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 15px;
-}
-</style>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div
+                    v-for="car in filteredCars"
+                    :key="car.id"
+                    class="p-4 bg-white rounded-lg shadow-md"
+                >
+                    <h2 class="text-lg font-bold">
+                        {{ car.make }} {{ car.model }}
+                    </h2>
+                    <p>Year: {{ car.year }}</p>
+                    <p>Miles: {{ car.miles }}</p>
+                </div>
+            </div>
+
+            <div v-if="!filteredCars.length" class="text-center text-gray-600">
+                No Cars Found
+            </div>
+        </div>
+    </MainLayout>
+</template>

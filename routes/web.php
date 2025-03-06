@@ -1,11 +1,14 @@
 <?php
-
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\BidderController;
+use Inertia\Inertia;
 use App\Http\Controllers\CarController;
+use App\Http\Controllers\BidderController;
 
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', function () {
+    return Inertia::render('Home');
+});
+
 Route::get('/bidders', [BidderController::class, 'index']);
+
 Route::get('/cars', [CarController::class, 'index']);
+
 

@@ -1,65 +1,53 @@
-<template>
-    <div class="bidders">
-        <h2>Bidders</h2>
-        <input
-            v-model="search"
-            type="text"
-            placeholder="Search bidders..."
-            class="search-box"
-        />
-        <div class="cards">
-            <div
-                v-for="bidder in filteredBidders"
-                :key="bidder.id"
-                class="card"
-            >
-                <h3>{{ bidder.first_name }} {{ bidder.last_name }}</h3>
-                <p>Email: {{ bidder.email }}</p>
-                <p>Address: {{ bidder.address }}</p>
-            </div>
-        </div>
-    </div>
-</template>
+<script setup>
+import { defineProps, ref, computed } from "vue";
+import MainLayout from "@/Pages/MainLayout.vue";
 
-<script>
-export default {
-    props: {
-        bidders: Array,
-    },
-    data() {
-        return {
-            search: "",
-        };
-    },
-    computed: {
-        filteredBidders() {
-            return this.bidders.filter(
-                (bidder) =>
-                    bidder.first_name
-                        .toLowerCase()
-                        .includes(this.search.toLowerCase()) ||
-                    bidder.last_name
-                        .toLowerCase()
-                        .includes(this.search.toLowerCase())
-            );
-        },
-    },
-};
+const props = defineProps({
+    bidders: Array,
+});
+
+const search = ref("");
+
+const filteredBidders = computed(() => {
+    if (!props.bidders) return [];
+    if (!search.value) return props.bidders;
+    return props.bidders.filter((bidder) =>
+        `${bidder.first_name} ${bidder.last_name}`
+            .toLowerCase()
+            .includes(search.value.toLowerCase())
+    );
+});
 </script>
 
-<style scoped>
-.search-box {
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-}
+<template>
+    <MainLayout>
+        <div class="p-6 bg-gray-100 rounded-lg shadow-md">
+            <h1 class="text-2xl font-bold mb-4">Bidders</h1>
 
-.card {
-    padding: 15px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 15px;
-}
-</style>
+            <input
+                v-model="search"
+                type="text"
+                placeholder="Search Bidders"
+                class="p-2 mb-4 border border-gray-300 rounded w-full"
+            />
+
+            <div v-if="filteredBidders.length">
+                <div
+                    v-for="bidder in filteredBidders"
+                    :key="bidder.id"
+                    class="p-4 mb-2 bg-white shadow-md rounded"
+                >
+                    <h2 class="text-lg font-bold">
+                        {{ bidder.first_name }} {{ bidder.last_name }}
+                    </h2>
+                    <p>Email: {{ bidder.email }}</p>
+                    <p>Address: {{ bidder.address }}</p>
+                </div>
+            </div>
+
+            <div v-else>
+                <p>No Bidders Found</p>
+            </div>
+        </div>
+    </MainLayout>
+</template>

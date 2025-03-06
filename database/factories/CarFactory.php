@@ -2,22 +2,20 @@
 
 namespace Database\Factories;
 
+use App\Models\Car;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Car>
- */
 class CarFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    protected $model = Car::class;
+
+    public function definition()
     {
         return [
-            //
+            'make' => $this->faker->randomElement(['Toyota', 'Honda', 'Ford', 'Chevrolet']),
+            'model' => $this->faker->word,
+            'year' => $this->faker->numberBetween(2000, 2023),
+            'miles' => $this->faker->numberBetween(10000, 100000),
         ];
     }
 }
